@@ -3,9 +3,9 @@ component extends="testbox.system.BaseSpec" {
         variables.model = createMock( "models.Company" );
 
         variables.@MODULE_NAME@Client = new hyper.models.HyperBuilder(
-            baseURL = server.system.environment[ "@MODULE_SLUG@_API_URL" ],
+            baseURL = server.system.environment[ "@API_NAME@_API_URL" ],
             headers = {
-                "X-@MODULE_SLUG@-TOKEN" : server.system.environment[ "@MODULE_SLUG@_API_KEY" ]
+                "X-@MODULE_SLUG@-TOKEN" : server.system.environment[ "@API_NAME@_API_KEY" ]
             }
         );
 

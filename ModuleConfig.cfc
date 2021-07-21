@@ -70,8 +70,8 @@ component {
 
 		// module settings - stored in modules.name.settings
 		settings = {
-			apiKey : getSystemSetting( "@MODULE_SLUG@_API_KEY", "blablasecret" ),
-			apiURL : getSystemSetting( "@MODULE_SLUG@_API_URL", "https://@MODULE_SLUG@.io/api/v1" ),
+			apiKey : getSystemSetting( "@API_NAME@_API_KEY", "blablasecret" ),
+			apiURL : getSystemSetting( "@API_NAME@_API_URL", "https://@MODULE_SLUG@.io/api/v1" ),
 		};
 
 		// Binder Mappings

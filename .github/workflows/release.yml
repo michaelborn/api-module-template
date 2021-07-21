@@ -1,4 +1,4 @@
-name: FinnHub CI
+name: @MODULE_Name@ Release
 
 on:
   push:
@@ -34,8 +34,8 @@ jobs:
           # Setup .env
           touch .env
           # ENV
-          printf "@MODULE_NAME@_API_KEY=${{ secrets.@MODULE_NAME@_API_KEY }}\n" >> .env
-          printf "@MODULE_NAME@_API_URL=${{ secrets.@MODULE_NAME@_API_URL }}\n" >> .env
+          printf "@API_NAME@_API_KEY=${{ secrets.@API_NAME@_API_KEY }}\n" >> .env
+          printf "@API_NAME@_API_URL=${{ secrets.@API_NAME@_API_URL }}\n" >> .env
 
       - name: Cache CommandBox Dependencies
         uses: actions/cache@v1
@@ -49,8 +49,7 @@ jobs:
         uses: elpete/setup-commandbox@v1.0.0
 
       - name: Install Test Harness Dependencies
-        run: |
-          box install
+        run: box install
 
       - name: Start ${{ matrix.cfengine }} Server
         run: |

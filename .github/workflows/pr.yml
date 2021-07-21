@@ -36,8 +36,8 @@ jobs:
           # Setup .env
           touch .env
           # ENV
-          printf "@MODULE_NAME@_API_KEY=${{ secrets.@MODULE_NAME@_API_KEY }}\n" >> .env
-          printf "@MODULE_NAME@_API_URL=${{ secrets.@MODULE_NAME@_API_URL }}\n" >> .env
+          printf "@API_NAME@_API_KEY=${{ secrets.@API_NAME@_API_KEY }}\n" >> .env
+          printf "@API_NAME@_API_URL=${{ secrets.@API_NAME@_API_URL }}\n" >> .env
 
       - name: Setup CommandBox
         uses: elpete/setup-commandbox@v1.0.0
