@@ -1,0 +1,106 @@
+name: Pull Requests
+
+on:
+  push:
+    branches-ignore:
+      - "main"
+      - "master"
+      - "development"
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  #############################################
+  # Tests First baby! We fail, no build :(
+  #############################################
+  tests:
+    name: Tests
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        cfengine: [ "lucee@5", "adobe@2018", "adobe@2021" ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "11"
+
+      - name: Setup Environment For Testing Process
+        run: |
+          # Setup .env
+          touch .env
+          # ENV
+          printf "@MODULE_NAME@_API_KEY=${{ secrets.@MODULE_NAME@_API_KEY }}\n" >> .env
+          printf "@MODULE_NAME@_API_URL=${{ secrets.@MODULE_NAME@_API_URL }}\n" >> .env
+
+      - name: Setup CommandBox
+        uses: elpete/setup-commandbox@v1.0.0
+
+      - name: Install Dependencies
+        run: |
+          box install
+
+      - name: Start ${{ matrix.cfengine }} Server
+        run: |
+          box server start cfengine=${{ matrix.cfengine }} port=60299 --noSaveSettings --debug
+          curl http://127.0.0.1:60299
+
+      - name: Run Tests
+        run: |
+          mkdir tests/results
+          box package set testbox.runner="http://localhost:60299/tests/runner.cfm"
+          box testbox run --verbose outputFile=tests/results/result outputFormats=json,antjunit
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: tests/results/*.xml
+          check_name: "${{ matrix.cfengine }} Test Results"
+
+      - name: Failure Debugging Info
+        if: ${{ failure() }}
+        working-directory: ./tests
+        run: |
+          box server log serverConfigFile="server-${{ matrix.cfengine }}.json"
+
+      - name: Upload Debugging Info To Artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: Failure Debugging Info - ${{ matrix.cfengine }}
+          path: |
+            tests/.engine/**/logs/*
+            tests/.engine/**/WEB-INF/cfusion/logs/*
+  format:
+    name: Format
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "11"
+
+      - name: Set Up CommandBox
+        uses: elpete/setup-commandbox@v1.0.0
+
+      - name: Install CFFormat
+        run: box install commandbox-cfformat
+
+      - name: Run CFFormat
+        run: box run-script format
+
+      - name: Commit Format Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply cfformat changes

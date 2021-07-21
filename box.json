@@ -1,0 +1,45 @@
+{
+    "author":"Michael Born <michael@ortussolutions.com>",
+    "dependencies":{
+        "hyper":"^3.1.0"
+    },
+    "description":"Wraps the @MODULE_NAME@ API",
+    "devDependencies":{
+        "coldbox":"6.4.0",
+        "testbox":"^4.4.0-snapshot"
+    },
+    "ignore":[
+        "**/.*",
+        "/test/",
+        "/tests/"
+    ],
+    "installPaths":{
+        "coldbox":"tests/resources/app/coldbox/",
+        "testbox":"tests/testbox/",
+        "hyper":"modules/hyper/"
+    },
+    "location":"ForgeboxStorage",
+    "name":"@MODULE_NAME@",
+    "private":false,
+    "repository":{
+        "type":"git",
+        "URL":"https://github.com/@GITHUB_USER@/@MODULE_SLUG@"
+    },
+    "bugs":"https://github.com/@GITHUB_USER@/@MODULE_SLUG@/issues",
+    "scripts":{
+        "postVersion":"package set location='@GITHUB_USER@/@MODULE_SLUG@#v`package version`'",
+        "onRelease":"publish",
+        "postPublish":"!git push --follow-tags"
+    },
+    "shortDescription":"CFML wrapper for the @MODULE_NAME@ API.",
+    "slug":"@MODULE_SLUG@",
+    "testbox":{
+        "runner":[
+            {
+                "default":"http://localhost:6335/test-harness/runner.cfm"
+            }
+        ]
+    },
+    "type":"modules",
+    "version":"1.0.0"
+}
